@@ -6,6 +6,7 @@
 #include <memory>
 #include <thread>
 #include <future>
+#include <regex>
 #include <fcrisan/native/error.hpp>
 #include <FCrisan/native/filebuf.hpp>
 #include <fcrisan/native/file.hpp>
@@ -148,9 +149,128 @@ std::vector<TestCase<char>> testCasesA {
 		"Stiinta si tehnica in Tara Romaneasca",
 		L"Știință și tehnică în Țara Românească",
 	},
+	{
+		// test name
+		"newlines -> UTF16",
+
+		// input
+		u8"Windows style CR+LF: \u000D\u000A"
+		u8"Unix style LF: \u000A"
+		u8"Old Mac style CR: \u000D"
+		u8"Mainframe-style NEL (but in Unicode): \u0085"
+		u8"Vertical tab VT: \u000B"
+		u8"Form feed FF (technically new page): \u000C"
+		u8"Line separator LS: \u2028"
+		u8"Paragraph separator PS: \u2029"
+		u8"That's all",
+
+		// output CP
+		1200,
+
+		// file output
+		L"Windows style CR+LF: \r\n"
+		L"Unix style LF: \r\n"
+		L"Old Mac style CR: \r\n"
+		L"Mainframe-style NEL (but in Unicode): \r\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+
+		// console output
+		L"Windows style CR+LF:\n"
+		L"Unix style LF:\n"
+		L"Old Mac style CR:\n"
+		L"Mainframe-style NEL (but in Unicode):\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+	},
+	{
+		// test name
+		"newlines -> UTF8",
+
+		// input
+		u8"Windows style CR+LF: \u000D\u000A"
+		u8"Unix style LF: \u000A"
+		u8"Old Mac style CR: \u000D"
+		u8"Mainframe-style NEL (but in Unicode): \u0085"
+		u8"Vertical tab VT: \u000B"
+		u8"Form feed FF (technically new page): \u000C"
+		u8"Line separator LS: \u2028"
+		u8"Paragraph separator PS: \u2029"
+		u8"That's all",
+
+		// output CP
+		65001,
+
+		// file output
+		u8"Windows style CR+LF: \r\n"
+		u8"Unix style LF: \r\n"
+		u8"Old Mac style CR: \r\n"
+		u8"Mainframe-style NEL (but in Unicode): \r\n"
+		u8"Vertical tab VT: \u000B"
+		u8"Form feed FF (technically new page): \u000C"
+		u8"Line separator LS: \u2028"
+		u8"Paragraph separator PS: \u2029"
+		u8"That's all",
+
+		// console output
+		L"Windows style CR+LF:\n"
+		L"Unix style LF:\n"
+		L"Old Mac style CR:\n"
+		L"Mainframe-style NEL (but in Unicode):\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+	},
+	{
+		// test name
+		"newlines -> 20127 7-bit ASCII",
+
+		// input
+		u8"Windows style CR+LF: \u000D\u000A"
+		u8"Unix style LF: \u000A"
+		u8"Old Mac style CR: \u000D"
+		u8"Mainframe-style NEL (but in Unicode): \u0085"
+		u8"Vertical tab VT: \u000B"
+		u8"Form feed FF (technically new page): \u000C"
+		u8"Line separator LS: \u2028"
+		u8"Paragraph separator PS: \u2029"
+		u8"That's all",
+
+		// output CP
+		20127,
+
+		"Windows style CR+LF: \r\n"
+		"Unix style LF: \r\n"
+		"Old Mac style CR: \r\n"
+		"Mainframe-style NEL (but in Unicode): \r\n"
+		"Vertical tab VT: \x0B"
+		"Form feed FF (technically new page): \x0C"
+		"Line separator LS: ?"
+		"Paragraph separator PS: ?"
+		"That's all",
+
+		// console output
+		L"Windows style CR+LF:\n"
+		L"Unix style LF:\n"
+		L"Old Mac style CR:\n"
+		L"Mainframe-style NEL (but in Unicode):\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+	},
 };
 
-std::vector<TestCase<wchar_t>> testCasesW = {
+std::vector<TestCase<wchar_t>> testCasesW {
 	{
 		"null UTF16 -> UTF8",
 		L"",
@@ -256,6 +376,125 @@ std::vector<TestCase<wchar_t>> testCasesW = {
 		"Stiinta si tehnica in Tara Romaneasca",
 		L"Știință și tehnică în Țara Românească",
 	},
+	{
+		// test name
+		"newlines -> UTF16",
+
+		// input
+		L"Windows style CR+LF: \u000D\u000A"
+		L"Unix style LF: \u000A"
+		L"Old Mac style CR: \u000D"
+		L"Mainframe-style NEL (but in Unicode): \u0085"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+
+		// output CP
+		1200,
+
+		// file output
+		L"Windows style CR+LF: \r\n"
+		L"Unix style LF: \r\n"
+		L"Old Mac style CR: \r\n"
+		L"Mainframe-style NEL (but in Unicode): \r\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+
+		// console output
+		L"Windows style CR+LF:\n"
+		L"Unix style LF:\n"
+		L"Old Mac style CR:\n"
+		L"Mainframe-style NEL (but in Unicode):\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+	},
+	{
+		// test name
+		"newlines -> UTF8",
+
+		// input
+		L"Windows style CR+LF: \u000D\u000A"
+		L"Unix style LF: \u000A"
+		L"Old Mac style CR: \u000D"
+		L"Mainframe-style NEL (but in Unicode): \u0085"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+
+		// output CP
+		65001,
+
+		// file output
+		u8"Windows style CR+LF: \r\n"
+		u8"Unix style LF: \r\n"
+		u8"Old Mac style CR: \r\n"
+		u8"Mainframe-style NEL (but in Unicode): \r\n"
+		u8"Vertical tab VT: \u000B"
+		u8"Form feed FF (technically new page): \u000C"
+		u8"Line separator LS: \u2028"
+		u8"Paragraph separator PS: \u2029"
+		u8"That's all",
+
+		// console output
+		L"Windows style CR+LF:\n"
+		L"Unix style LF:\n"
+		L"Old Mac style CR:\n"
+		L"Mainframe-style NEL (but in Unicode):\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+	},
+	{
+		// test name
+		"newlines -> 20127 7-bit ASCII",
+
+		// input
+		L"Windows style CR+LF: \u000D\u000A"
+		L"Unix style LF: \u000A"
+		L"Old Mac style CR: \u000D"
+		L"Mainframe-style NEL (but in Unicode): \u0085"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+
+		// output CP
+		20127,
+
+		"Windows style CR+LF: \r\n"
+		"Unix style LF: \r\n"
+		"Old Mac style CR: \r\n"
+		"Mainframe-style NEL (but in Unicode): \r\n"
+		"Vertical tab VT: \x0B"
+		"Form feed FF (technically new page): \x0C"
+		"Line separator LS: ?"
+		"Paragraph separator PS: ?"
+		"That's all",
+
+		// console output
+		L"Windows style CR+LF:\n"
+		L"Unix style LF:\n"
+		L"Old Mac style CR:\n"
+		L"Mainframe-style NEL (but in Unicode):\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+	},
 };
 
 HANDLE GetStdOut() {
@@ -290,6 +529,7 @@ void ClearScreen() {
 		throw_error("Cannot reposition cursor");
 }
 
+
 std::wstring GetConsoleText() {
 	auto hStdOut = GetStdOut();
 
@@ -307,14 +547,17 @@ std::wstring GetConsoleText() {
 
 		std::wstring line;
 		line.resize(safe_int<size_t>(cellsToRead));
-
 		DWORD charsRead;
 		clear_error();
 		if (!ReadConsoleOutputCharacterW(hStdOut, &line[0], safe_int<DWORD>(cellsToRead), startCoord, &charsRead))
 			throw_error("Cannot read screen buffer");
-
 		line.resize(charsRead);
 
+		static const std::wregex trimEol(L" +$");
+		line = std::regex_replace(line, trimEol, L"");
+
+		if (lineNo != 0)
+			buffer.append(L"\n");
 		buffer.append(line);
 	}
 
