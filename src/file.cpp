@@ -1,6 +1,9 @@
 #include <fcrisan/native/file.hpp>
 #include <fcrisan/native/error.hpp>
 #include <Windows.h>
+#include <safeint.h>
+
+template <typename T> using safe_int = msl::utilities::SafeInt<T>;
 
 namespace fcrisan::native {
 
@@ -88,18 +91,18 @@ namespace fcrisan::native {
 	}
 
 	std::size_t file::read(void *buffer, std::size_t size) {
-		DWORD bytesToRead = size;
+		safe_int<DWORD> bytesToRead{ size };
 		DWORD bytesRead;
 		if (!::ReadFile(pimpl->h, buffer, bytesToRead, &bytesRead, nullptr)) {
 			auto err = last_error();
 			if (err != ERROR_BROKEN_PIPE)
 				throw_error("cannot read from file", err);
 		}
-		return bytesRead;
+		return safe_int<size_t>(bytesRead);
 	}
 
 	void file::write(const void *buffer, std::size_t size) {
-		DWORD bytesToWrite = size;
+		safe_int<DWORD> bytesToWrite{ size };
 		DWORD bytesWritten;
 		if (!::WriteFile(pimpl->h, buffer, bytesToWrite, &bytesWritten, nullptr))
 			throw_error("cannot write to file");
