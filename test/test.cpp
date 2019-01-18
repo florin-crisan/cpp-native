@@ -36,457 +36,14 @@ struct TestCase {
 };
 
 std::vector<TestCase<char>> testCasesA {
-	{
-		"null UTF8 -> UTF8",
-		"",
-		CP_UTF8,
-		"",
-		L"",
-	},
-	{
-		"null UTF8 -> UTF16",
-		"",
-		fcrisan::native::code_pages::utf16,
-		L"",
-		L"",
-	},
-	{
-		"null UTF8 -> 1252",
-		"",
-		1252,
-		"",
-		L"",
-	},
-	{
-		"precomposed UTF8 -> UTF8",
-		u8"Știință și tehnică în Țara Românească",
-		CP_UTF8,
-		u8"Știință și tehnică în Țara Românească",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF8 -> UTF8", /* no change, only precompose on console */
-		u8"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		CP_UTF8,
-		u8"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF8 -> UTF16",
-		u8"Știință și tehnică în Țara Românească",
-		fcrisan::native::code_pages::utf16,
-		L"Știință și tehnică în Țara Românească",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF8 -> UTF16",
-		u8"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		fcrisan::native::code_pages::utf16,
-		L"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF8 -> 1250 Windows Latin 2",
-		u8"Știință și tehnică în Țara Românească",
-		1250,
-		"\xAAtiin\xFE\xE3 \xBAi tehnic\xE3 \xEEn " "\xDE" "ara Rom\xE2neasc\xE3",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF8 -> 1250 Windows Latin 2",
-		u8"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		1250,
-		"\xAAtiin\xFE\xE3 \xBAi tehnic\xE3 \xEEn " "\xDE" "ara Rom\xE2neasc\xE3",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF8 -> 852 DOS Latin 2",
-		u8"Știință și tehnică în Țara Românească",
-		852,
-		"\xB8tiin\xEE\xC7 \xADi tehnic\xC7 \x8Cn " "\xDD" "ara Rom\x83neasc\xC7",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF8 -> 852 DOS Latin 2",
-		u8"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		852,
-		"\xB8tiin\xEE\xC7 \xADi tehnic\xC7 \x8Cn " "\xDD" "ara Rom\x83neasc\xC7",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF8 -> 1252 Windows Latin 1",
-		u8"Știință și tehnică în Țara Românească",
-		1252,
-		"Stiinta si tehnica \xEEn Tara Rom\xE2neasca",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF8 -> 1252 Windows Latin 1",
-		u8"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		1252,
-		"Stiinta si tehnica \xEEn Tara Rom\xE2neasca",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF8 -> 20127", // 7-bit ascii
-		u8"Știință și tehnică în Țara Românească",
-		20127,
-		"Stiinta si tehnica in Tara Romaneasca",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF8 -> 20127", // 7-bit ascii
-		u8"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		20127,
-		"Stiinta si tehnica in Tara Romaneasca",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		// test name
-		"newlines -> UTF16",
-
-		// input
-		u8"Windows style CR+LF: \u000D\u000A"
-		u8"Unix style LF: \u000A"
-		u8"Old Mac style CR: \u000D"
-		u8"Mainframe-style NEL (but in Unicode): \u0085"
-		u8"Vertical tab VT: \u000B"
-		u8"Form feed FF (technically new page): \u000C"
-		u8"Line separator LS: \u2028"
-		u8"Paragraph separator PS: \u2029"
-		u8"That's all",
-
-		// output CP
-		1200,
-
-		// file output
-		L"Windows style CR+LF: \r\n"
-		L"Unix style LF: \r\n"
-		L"Old Mac style CR: \r\n"
-		L"Mainframe-style NEL (but in Unicode): \r\n"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-
-		// console output
-		L"Windows style CR+LF:\n"
-		L"Unix style LF:\n"
-		L"Old Mac style CR:\n"
-		L"Mainframe-style NEL (but in Unicode):\n"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-	},
-	{
-		// test name
-		"newlines -> UTF8",
-
-		// input
-		u8"Windows style CR+LF: \u000D\u000A"
-		u8"Unix style LF: \u000A"
-		u8"Old Mac style CR: \u000D"
-		u8"Mainframe-style NEL (but in Unicode): \u0085"
-		u8"Vertical tab VT: \u000B"
-		u8"Form feed FF (technically new page): \u000C"
-		u8"Line separator LS: \u2028"
-		u8"Paragraph separator PS: \u2029"
-		u8"That's all",
-
-		// output CP
-		65001,
-
-		// file output
-		u8"Windows style CR+LF: \r\n"
-		u8"Unix style LF: \r\n"
-		u8"Old Mac style CR: \r\n"
-		u8"Mainframe-style NEL (but in Unicode): \r\n"
-		u8"Vertical tab VT: \u000B"
-		u8"Form feed FF (technically new page): \u000C"
-		u8"Line separator LS: \u2028"
-		u8"Paragraph separator PS: \u2029"
-		u8"That's all",
-
-		// console output
-		L"Windows style CR+LF:\n"
-		L"Unix style LF:\n"
-		L"Old Mac style CR:\n"
-		L"Mainframe-style NEL (but in Unicode):\n"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-	},
-	{
-		// test name
-		"newlines -> 20127 7-bit ASCII",
-
-		// input
-		u8"Windows style CR+LF: \u000D\u000A"
-		u8"Unix style LF: \u000A"
-		u8"Old Mac style CR: \u000D"
-		u8"Mainframe-style NEL (but in Unicode): \u0085"
-		u8"Vertical tab VT: \u000B"
-		u8"Form feed FF (technically new page): \u000C"
-		u8"Line separator LS: \u2028"
-		u8"Paragraph separator PS: \u2029"
-		u8"That's all",
-
-		// output CP
-		20127,
-
-		"Windows style CR+LF: \r\n"
-		"Unix style LF: \r\n"
-		"Old Mac style CR: \r\n"
-		"Mainframe-style NEL (but in Unicode): \r\n"
-		"Vertical tab VT: \x0B"
-		"Form feed FF (technically new page): \x0C"
-		"Line separator LS: ?"
-		"Paragraph separator PS: ?"
-		"That's all",
-
-		// console output
-		L"Windows style CR+LF:\n"
-		L"Unix style LF:\n"
-		L"Old Mac style CR:\n"
-		L"Mainframe-style NEL (but in Unicode):\n"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-	},
+#define INPUT_STRING(x) u8 ## x
+#include "test_cases.inline"
 };
 
 std::vector<TestCase<wchar_t>> testCasesW {
-	{
-		"null UTF16 -> UTF8",
-		L"",
-		CP_UTF8,
-		"",
-		L"",
-	},
-	{
-		"null UTF16 -> UTF16",
-		L"",
-		fcrisan::native::code_pages::utf16,
-		L"",
-		L"",
-	},
-	{
-		"null UTF16 -> 1252",
-		L"",
-		1252,
-		"",
-		L"",
-	},
-	{
-		"precomposed UTF16 -> UTF8",
-		L"Știință și tehnică în Țara Românească",
-		CP_UTF8,
-		u8"Știință și tehnică în Țara Românească",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF16 -> UTF8", /* no change, only precompose on console */
-		L"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		CP_UTF8,
-		u8"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF16 -> UTF16",
-		L"Știință și tehnică în Țara Românească",
-		fcrisan::native::code_pages::utf16,
-		L"Știință și tehnică în Țara Românească",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF16 -> UTF16",
-		L"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		fcrisan::native::code_pages::utf16,
-		L"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF16 -> 1250 Windows Latin 2",
-		L"Știință și tehnică în Țara Românească",
-		1250,
-		"\xAAtiin\xFE\xE3 \xBAi tehnic\xE3 \xEEn " "\xDE" "ara Rom\xE2neasc\xE3",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF16 -> 1250 Windows Latin 2",
-		L"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		1250,
-		"\xAAtiin\xFE\xE3 \xBAi tehnic\xE3 \xEEn " "\xDE" "ara Rom\xE2neasc\xE3",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF16 -> 852 DOS Latin 2",
-		L"Știință și tehnică în Țara Românească",
-		852,
-		"\xB8tiin\xEE\xC7 \xADi tehnic\xC7 \x8Cn " "\xDD" "ara Rom\x83neasc\xC7",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF16 -> 852 DOS Latin 2",
-		L"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		852,
-		"\xB8tiin\xEE\xC7 \xADi tehnic\xC7 \x8Cn " "\xDD" "ara Rom\x83neasc\xC7",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF16 -> 1252 Windows Latin 1",
-		L"Știință și tehnică în Țara Românească",
-		1252,
-		"Stiinta si tehnica \xEEn Tara Rom\xE2neasca",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF16 -> 1252 Windows Latin 1",
-		L"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		1252,
-		"Stiinta si tehnica \xEEn Tara Rom\xE2neasca",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"precomposed UTF16 -> 20127", // 7-bit ascii
-		L"Știință și tehnică în Țara Românească",
-		20127,
-		"Stiinta si tehnica in Tara Romaneasca",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		"decomposed UTF16 -> 20127", // 7-bit ascii
-		L"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
-		20127,
-		"Stiinta si tehnica in Tara Romaneasca",
-		L"Știință și tehnică în Țara Românească",
-	},
-	{
-		// test name
-		"newlines -> UTF16",
-
-		// input
-		L"Windows style CR+LF: \u000D\u000A"
-		L"Unix style LF: \u000A"
-		L"Old Mac style CR: \u000D"
-		L"Mainframe-style NEL (but in Unicode): \u0085"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-
-		// output CP
-		1200,
-
-		// file output
-		L"Windows style CR+LF: \r\n"
-		L"Unix style LF: \r\n"
-		L"Old Mac style CR: \r\n"
-		L"Mainframe-style NEL (but in Unicode): \r\n"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-
-		// console output
-		L"Windows style CR+LF:\n"
-		L"Unix style LF:\n"
-		L"Old Mac style CR:\n"
-		L"Mainframe-style NEL (but in Unicode):\n"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-	},
-	{
-		// test name
-		"newlines -> UTF8",
-
-		// input
-		L"Windows style CR+LF: \u000D\u000A"
-		L"Unix style LF: \u000A"
-		L"Old Mac style CR: \u000D"
-		L"Mainframe-style NEL (but in Unicode): \u0085"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-
-		// output CP
-		65001,
-
-		// file output
-		u8"Windows style CR+LF: \r\n"
-		u8"Unix style LF: \r\n"
-		u8"Old Mac style CR: \r\n"
-		u8"Mainframe-style NEL (but in Unicode): \r\n"
-		u8"Vertical tab VT: \u000B"
-		u8"Form feed FF (technically new page): \u000C"
-		u8"Line separator LS: \u2028"
-		u8"Paragraph separator PS: \u2029"
-		u8"That's all",
-
-		// console output
-		L"Windows style CR+LF:\n"
-		L"Unix style LF:\n"
-		L"Old Mac style CR:\n"
-		L"Mainframe-style NEL (but in Unicode):\n"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-	},
-	{
-		// test name
-		"newlines -> 20127 7-bit ASCII",
-
-		// input
-		L"Windows style CR+LF: \u000D\u000A"
-		L"Unix style LF: \u000A"
-		L"Old Mac style CR: \u000D"
-		L"Mainframe-style NEL (but in Unicode): \u0085"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-
-		// output CP
-		20127,
-
-		"Windows style CR+LF: \r\n"
-		"Unix style LF: \r\n"
-		"Old Mac style CR: \r\n"
-		"Mainframe-style NEL (but in Unicode): \r\n"
-		"Vertical tab VT: \x0B"
-		"Form feed FF (technically new page): \x0C"
-		"Line separator LS: ?"
-		"Paragraph separator PS: ?"
-		"That's all",
-
-		// console output
-		L"Windows style CR+LF:\n"
-		L"Unix style LF:\n"
-		L"Old Mac style CR:\n"
-		L"Mainframe-style NEL (but in Unicode):\n"
-		L"Vertical tab VT: \u000B"
-		L"Form feed FF (technically new page): \u000C"
-		L"Line separator LS: \u2028"
-		L"Paragraph separator PS: \u2029"
-		L"That's all",
-	},
+#undef INPUT_STRING
+#define INPUT_STRING(x) L ## x
+#include "test_cases.inline"
 };
 
 HANDLE GetStdOut() {
@@ -556,7 +113,7 @@ std::wstring GetConsoleText() {
 }
 
 std::vector<std::byte> read_to_end(file &f) {
-    std::vector<std::byte> bytes;
+	std::vector<std::byte> bytes;
 	bytes.resize(4096); // Should be enough for our tests.
 	auto bytesRead = f.read(&(bytes[0]), bytes.size());
 	bytes.resize(bytesRead);
@@ -565,16 +122,16 @@ std::vector<std::byte> read_to_end(file &f) {
 
 template <typename Ch, typename It>
 int CompareResults(const TestCase<Ch> &tc, const It &begin, const It &end) {
-    const std::byte *pStart;
-    const std::byte *pEnd;
+	const std::byte *pStart;
+	const std::byte *pEnd;
 
 	if (tc.codePage == code_pages::utf16) {
-        pStart = reinterpret_cast<const std::byte *>(tc.zstring.outputw);
-        pEnd = reinterpret_cast<const std::byte *>(tc.zstring.outputw + wcslen(tc.zstring.outputw));
+		pStart = reinterpret_cast<const std::byte *>(tc.zstring.outputw);
+		pEnd = reinterpret_cast<const std::byte *>(tc.zstring.outputw + wcslen(tc.zstring.outputw));
 	}
 	else {
-        pStart = reinterpret_cast<const std::byte *>(tc.zstring.outputa);
-        pEnd = reinterpret_cast<const std::byte *>(tc.zstring.outputa + strlen(tc.zstring.outputa));
+		pStart = reinterpret_cast<const std::byte *>(tc.zstring.outputa);
+		pEnd = reinterpret_cast<const std::byte *>(tc.zstring.outputa + strlen(tc.zstring.outputa));
 	}
 
 	auto expectedSize = safe_int<std::size_t>(pEnd - pStart);
@@ -614,7 +171,7 @@ int RunPipeTest(const TestCase<Ch> &tc) {
 	auto buf = new fcrisan::native::filebuf<Ch>{ w };
 	auto out = std::basic_ostream<Ch>{buf};
 
-    std::vector<std::byte> fileContents;
+	std::vector<std::byte> fileContents;
 
 	auto readTask = std::async(std::launch::async, [&]() {
 		fileContents = read_to_end(*pipe.read);
@@ -643,7 +200,7 @@ int RunFileTest(const TestCase<Ch> &tc) {
 	auto f = file{ h, true };
 	auto w = text_writer{ f, tc.codePage };
 	auto buf = new fcrisan::native::filebuf<Ch>{ w };
-    auto out = std::basic_ostream<Ch, std::char_traits<Ch>>{buf};
+	auto out = std::basic_ostream<Ch, std::char_traits<Ch>>{buf};
 
 	out << tc.input;
 	out.flush();
@@ -662,7 +219,7 @@ int RunNullTest(const TestCase<Ch> &tc) {
 	auto f = file{ nullptr, false }; // Empty writer.
 	auto w = text_writer{ f, tc.codePage };
 	auto buf = new fcrisan::native::filebuf<Ch>{ w };
-    auto out = std::basic_ostream<Ch, std::char_traits<Ch>>{ buf };
+	auto out = std::basic_ostream<Ch, std::char_traits<Ch>>{ buf };
 
 	out << tc.input;
 	out.flush();
@@ -680,7 +237,7 @@ int RunConsoleTest(const TestCase<Ch> &tc) {
 	auto f = file{ GetStdOut(), false };
 	auto w = text_writer{ f, tc.codePage };
 	auto buf = new fcrisan::native::filebuf<Ch>{ w };
-    auto out = std::basic_ostream<Ch, std::char_traits<Ch>>{ buf };
+	auto out = std::basic_ostream<Ch, std::char_traits<Ch>>{ buf };
 
 	ClearScreen();
 	out << tc.input;
@@ -729,6 +286,7 @@ int main() {
 		failed += RunTests<wchar_t>(testCasesW, &RunPipeTest<wchar_t>, "pipe");
 		failed += RunTests<char>(testCasesA, &RunConsoleTest<char>, "console");
 		failed += RunTests<wchar_t>(testCasesW, &RunConsoleTest<wchar_t>, "console");
+		cerr << failed << " tests failed\n";
 		return failed;
 	}
 	catch (const exception &ex) {

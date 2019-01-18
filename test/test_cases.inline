@@ -1,0 +1,224 @@
+﻿	{
+		"null UTF8 -> UTF8",
+		INPUT_STRING(""),
+		code_pages::utf8,
+		"",
+		L"",
+	},
+	{
+		"null UTF8 -> UTF16",
+		INPUT_STRING(""),
+		code_pages::utf16,
+		L"",
+		L"",
+	},
+	{
+		"null UTF8 -> 1252 Windows Latin 1 Western Europe",
+		INPUT_STRING(""),
+		code_pages::windows_western_europe,
+		"",
+		L"",
+	},
+	{
+		"precomposed UTF8 -> UTF8",
+		INPUT_STRING("Știință și tehnică în Țara Românească"),
+		code_pages::utf8,
+		u8"Știință și tehnică în Țara Românească",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"decomposed UTF8 -> UTF8", /* no change, only precompose on console */
+		INPUT_STRING("S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306"),
+		code_pages::utf8,
+		u8"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"precomposed UTF8 -> UTF16",
+		INPUT_STRING("Știință și tehnică în Țara Românească"),
+		code_pages::utf16,
+		L"Știință și tehnică în Țara Românească",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"decomposed UTF8 -> UTF16",
+		INPUT_STRING("S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306"),
+		code_pages::utf16,
+		L"S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"precomposed UTF8 -> 1250 Windows Latin 2 Eastern Europe",
+		INPUT_STRING("Știință și tehnică în Țara Românească"),
+		code_pages::windows_eastern_europe,
+		"\xAAtiin\xFE\xE3 \xBAi tehnic\xE3 \xEEn " "\xDE" "ara Rom\xE2neasc\xE3",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"decomposed UTF8 -> 1250 Windows Latin 2 Eastern Europe",
+		INPUT_STRING("S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306"),
+		code_pages::windows_eastern_europe,
+		"\xAAtiin\xFE\xE3 \xBAi tehnic\xE3 \xEEn " "\xDE" "ara Rom\xE2neasc\xE3",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"precomposed UTF8 -> 852 DOS Latin 2 Eastern Europe",
+		INPUT_STRING("Știință și tehnică în Țara Românească"),
+		code_pages::dos_eastern_europe,
+		"\xB8tiin\xEE\xC7 \xADi tehnic\xC7 \x8Cn " "\xDD" "ara Rom\x83neasc\xC7",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"decomposed UTF8 -> 852 DOS Latin 2 Eastern Europe",
+		INPUT_STRING("S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306"),
+		code_pages::dos_eastern_europe,
+		"\xB8tiin\xEE\xC7 \xADi tehnic\xC7 \x8Cn " "\xDD" "ara Rom\x83neasc\xC7",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"precomposed UTF8 -> 1252 Windows Latin 1 Western Europe",
+		INPUT_STRING("Știință și tehnică în Țara Românească"),
+		code_pages::windows_western_europe,
+		"Stiinta si tehnica \xEEn Tara Rom\xE2neasca",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"decomposed UTF8 -> 1252 Windows Latin 1 Western Europe",
+		INPUT_STRING("S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306"),
+		code_pages::windows_western_europe,
+		"Stiinta si tehnica \xEEn Tara Rom\xE2neasca",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"precomposed UTF8 -> 20127 7-bit ASCII", // 7-bit ascii
+		INPUT_STRING("Știință și tehnică în Țara Românească"),
+		code_pages::ascii,
+		"Stiinta si tehnica in Tara Romaneasca",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		"decomposed UTF8 -> 20127 7-bit ASCII", // 7-bit ascii
+		INPUT_STRING("S\u0326tiint\u0326a\u0306 s\u0326i tehnica\u0306 i\u0302n T\u0326ara Roma\u0302neasca\u0306"),
+		code_pages::ascii,
+		"Stiinta si tehnica in Tara Romaneasca",
+		L"Știință și tehnică în Țara Românească",
+	},
+	{
+		// test name
+		"newlines -> UTF16",
+
+		// input
+		INPUT_STRING("Windows style CR+LF: \u000D\u000A")
+		INPUT_STRING("Unix style LF: \u000A")
+		INPUT_STRING("Old Mac style CR: \u000D")
+		INPUT_STRING("Mainframe-style NEL (but in Unicode): \u0085")
+		INPUT_STRING("Vertical tab VT: \u000B")
+		INPUT_STRING("Form feed FF (technically new page): \u000C")
+		INPUT_STRING("Line separator LS: \u2028")
+		INPUT_STRING("Paragraph separator PS: \u2029")
+		INPUT_STRING("That's all"),
+
+		// output CP
+		code_pages::utf16,
+
+		// file output
+		L"Windows style CR+LF: \r\n"
+		L"Unix style LF: \r\n"
+		L"Old Mac style CR: \r\n"
+		L"Mainframe-style NEL (but in Unicode): \r\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+
+		// console output
+		L"Windows style CR+LF:\n"
+		L"Unix style LF:\n"
+		L"Old Mac style CR:\n"
+		L"Mainframe-style NEL (but in Unicode):\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+	},
+	{
+		// test name
+		"newlines -> UTF8",
+
+		// input
+		INPUT_STRING("Windows style CR+LF: \u000D\u000A")
+		INPUT_STRING("Unix style LF: \u000A")
+		INPUT_STRING("Old Mac style CR: \u000D")
+		INPUT_STRING("Mainframe-style NEL (but in Unicode): \u0085")
+		INPUT_STRING("Vertical tab VT: \u000B")
+		INPUT_STRING("Form feed FF (technically new page): \u000C")
+		INPUT_STRING("Line separator LS: \u2028")
+		INPUT_STRING("Paragraph separator PS: \u2029")
+		INPUT_STRING("That's all"),
+
+		// output CP
+		code_pages::utf8,
+
+		// file output
+		u8"Windows style CR+LF: \r\n"
+		u8"Unix style LF: \r\n"
+		u8"Old Mac style CR: \r\n"
+		u8"Mainframe-style NEL (but in Unicode): \r\n"
+		u8"Vertical tab VT: \u000B"
+		u8"Form feed FF (technically new page): \u000C"
+		u8"Line separator LS: \u2028"
+		u8"Paragraph separator PS: \u2029"
+		u8"That's all",
+
+		// console output
+		L"Windows style CR+LF:\n"
+		L"Unix style LF:\n"
+		L"Old Mac style CR:\n"
+		L"Mainframe-style NEL (but in Unicode):\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+	},
+	{
+		// test name
+		"newlines -> 20127 7-bit ASCII",
+
+		// input
+		INPUT_STRING("Windows style CR+LF: \u000D\u000A")
+		INPUT_STRING("Unix style LF: \u000A")
+		INPUT_STRING("Old Mac style CR: \u000D")
+		INPUT_STRING("Mainframe-style NEL (but in Unicode): \u0085")
+		INPUT_STRING("Vertical tab VT: \u000B")
+		INPUT_STRING("Form feed FF (technically new page): \u000C")
+		INPUT_STRING("Line separator LS: \u2028")
+		INPUT_STRING("Paragraph separator PS: \u2029")
+		INPUT_STRING("That's all"),
+
+		// output CP
+		code_pages::ascii,
+
+		"Windows style CR+LF: \r\n"
+		"Unix style LF: \r\n"
+		"Old Mac style CR: \r\n"
+		"Mainframe-style NEL (but in Unicode): \r\n"
+		"Vertical tab VT: \x0B"
+		"Form feed FF (technically new page): \x0C"
+		"Line separator LS: ?"
+		"Paragraph separator PS: ?"
+		"That's all",
+
+		// console output
+		L"Windows style CR+LF:\n"
+		L"Unix style LF:\n"
+		L"Old Mac style CR:\n"
+		L"Mainframe-style NEL (but in Unicode):\n"
+		L"Vertical tab VT: \u000B"
+		L"Form feed FF (technically new page): \u000C"
+		L"Line separator LS: \u2028"
+		L"Paragraph separator PS: \u2029"
+		L"That's all",
+	},
