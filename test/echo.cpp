@@ -52,7 +52,7 @@ int main() {
 		std::vector<std::string> narrowArgs;
 		std::vector<const char *> argv;
 		for (int i = 0; i < argCount; ++i)
-			narrowArgs.push_back(native::to_narrow_string(arguments[i], std::wcslen(arguments[i])));
+			narrowArgs.push_back(native::to_narrow_string(arguments[i]));
 		for (const auto &a : narrowArgs)
 			argv.push_back(&a[0]);
 

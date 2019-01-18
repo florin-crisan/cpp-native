@@ -8,8 +8,10 @@
 
 namespace fcrisan::native {
 
+	std::wstring to_wide_string(const char *what, code_page_id cp = code_pages::utf8);
 	std::wstring to_wide_string(const char *what, std::size_t count, code_page_id cp = code_pages::utf8);
 
+	std::string to_narrow_string(const wchar_t *what, code_page_id cp = code_pages::utf8);
 	std::string to_narrow_string(const wchar_t *what, std::size_t count, code_page_id cp = code_pages::utf8);
 
 	std::wstring precompose(const wchar_t *what, std::size_t count);

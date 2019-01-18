@@ -11,34 +11,50 @@ namespace fcrisan::native {
 
 	static_assert(sizeof(code_page_id) == sizeof(UINT));
 
+	namespace  {
+
+		int do_widen(code_page_id codePage, const char *originalString, int originalCount, wchar_t *convertedString, int convertedSize) {
+			return ::MultiByteToWideChar(codePage, 0, originalString, originalCount, convertedString, convertedSize);
+		}
+
+		int do_narrow(code_page_id codePage, const wchar_t *originalString, int originalCount, char *convertedString, int convertedSize) {
+			return ::WideCharToMultiByte(codePage, 0, originalString, originalCount, convertedString, convertedSize, nullptr, nullptr);
+		}
+
+		template <typename To, typename From, typename Fn>
+		std::basic_string<To> convert(Fn fn, const From *originalString, int originalCount, code_page_id codePage) {
+			clear_error();
+			int convertedCount = fn(codePage, originalString, originalCount, nullptr, 0);
+			if (!convertedCount)
+				throw_error("cannot get converted string length");
+			std::basic_string<To> convertedString;
+			convertedString.resize(safe_int<std::size_t>(convertedCount));
+			int actuallyConverted = fn(codePage, originalString, originalCount, &(convertedString[0]), convertedCount);
+			if (!actuallyConverted)
+				throw_error("cannot convert string");
+			if (actuallyConverted != convertedCount)
+				throw_error("partial conversion");
+			return convertedString;
+		}
+
+	}
+
+	std::wstring to_wide_string(const char *narrowString, code_page_id codePage) {
+		return convert<wchar_t>(&do_widen, narrowString, -1, codePage);
+	}
+
 	std::wstring to_wide_string(const char *narrowString, std::size_t count, code_page_id codePage) {
-		safe_int<int> narrowCount{ count };
-		clear_error();
-		safe_int<int> wideCount = ::MultiByteToWideChar(codePage, 0, narrowString, narrowCount, nullptr, 0);
-		if (!wideCount)
-			throw_error("Cannot get wide string length");
-		std::wstring wideString;
-		wideString.resize(wideCount);
-		clear_error();
-		safe_int<int> resultingChars = ::MultiByteToWideChar(codePage, 0, narrowString, narrowCount, &wideString[0], wideCount);
-		if (!resultingChars || resultingChars != wideCount)
-			throw_error("Cannot convert to wide string");
-		return wideString;
+		int intCount = safe_int<int>(count);
+		return convert<wchar_t>(&do_widen, narrowString, intCount, codePage);
 	}
 
 	std::string to_narrow_string(const wchar_t *wideString, std::size_t count, code_page_id codePage) {
-		safe_int<int> wideCount{ count };
-		clear_error();
-        safe_int<int> narrowCount = ::WideCharToMultiByte(codePage, 0, wideString, wideCount, nullptr, 0, nullptr, nullptr);
-		if (!narrowCount)
-			throw_error("Cannot get narrow string length");
-		std::string narrowString;
-		narrowString.resize(narrowCount);
-		clear_error();
-        safe_int<int> resultingChars = ::WideCharToMultiByte(codePage, 0, wideString, wideCount, &narrowString[0], narrowCount, nullptr, nullptr);
-		if (!resultingChars || resultingChars != narrowCount)
-			throw_error("Cannot convert to narrow string");
-		return narrowString;
+		int intCount = safe_int<int>(count);
+		return convert<char>(&do_narrow, wideString, intCount, codePage);
+	}
+
+	std::string to_narrow_string(const wchar_t *wideString, code_page_id codePage) {
+		return convert<char>(&do_narrow, wideString, -1, codePage);
 	}
 
 	std::wstring precompose(const wchar_t *what, std::size_t count) {
@@ -60,9 +76,9 @@ namespace fcrisan::native {
 		wchar_t *end = what + count;
 		for (wchar_t *ch = what; ch != end; ++ch) {
 			if (*ch == L'\u0218') *ch = L'\u015E'; // S-comma -> S-cedilla
-            else if (*ch == L'\u0219') *ch = L'\u015F'; // s-comma -> s-cedilla
-            else if (*ch == L'\u021A') *ch = L'\u0162'; // T-comma -> T-cedilla
-            else if (*ch == L'\u021B') *ch = L'\u0163'; // t-comma -> t-cedilla
+			else if (*ch == L'\u0219') *ch = L'\u015F'; // s-comma -> s-cedilla
+			else if (*ch == L'\u021A') *ch = L'\u0162'; // T-comma -> T-cedilla
+			else if (*ch == L'\u021B') *ch = L'\u0163'; // t-comma -> t-cedilla
 		}
 	}
 
