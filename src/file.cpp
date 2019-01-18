@@ -1,5 +1,6 @@
 #include <fcrisan/native/file.hpp>
 #include <fcrisan/native/error.hpp>
+#include <fcrisan/native/text.hpp>
 #include <SafeInt.hpp>
 #include <Windows.h>
 #undef min
@@ -47,7 +48,7 @@ namespace fcrisan::native {
 	}
 
 	void file::rewind()  {
-        LARGE_INTEGER zeroPos = { };
+		LARGE_INTEGER zeroPos = { };
 		clear_error();
 		if (!::SetFilePointerEx(pimpl->h, zeroPos, nullptr, FILE_BEGIN))
 			throw_error("cannot rewind file");
@@ -55,7 +56,7 @@ namespace fcrisan::native {
 
 	std::streamsize file::position() const {
 		static_assert(sizeof(std::streamsize) == sizeof(LARGE_INTEGER));
-        LARGE_INTEGER zeroPos = { };
+		LARGE_INTEGER zeroPos = { };
 		LARGE_INTEGER pos;
 		clear_error();
 		if (!::SetFilePointerEx(pimpl->h, zeroPos, &pos, FILE_CURRENT))
@@ -118,7 +119,12 @@ namespace fcrisan::native {
 	static_assert(sizeof(share_mode) == sizeof(DWORD));
 	static_assert(sizeof(create_mode) == sizeof(DWORD));
 
-	std::shared_ptr<file> open_file(const nzstring *fileName, file_access access, share_mode share, create_mode creationMode) {
+	std::shared_ptr<file> open_file(const char *fileName, file_access access, share_mode share, create_mode creationMode) {
+		auto wideName = to_wide_string(fileName);
+		return open_file(wideName.c_str(), access, share, creationMode);
+	}
+
+	std::shared_ptr<file> open_file(const wchar_t *fileName, file_access access, share_mode share, create_mode creationMode) {
 		clear_error();
 		HANDLE h = ::CreateFileW(fileName, static_cast<DWORD>(access), static_cast<DWORD>(share), nullptr, static_cast<DWORD>(creationMode), 0, nullptr);
 		if (h == INVALID_HANDLE_VALUE)

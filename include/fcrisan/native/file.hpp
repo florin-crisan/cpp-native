@@ -59,11 +59,6 @@ namespace fcrisan::native {
 #ifdef _WIN32
 
 	/**
-		Native operating system C-style string type.
-	*/
-	typedef wchar_t nzstring;
-
-	/**
 		File access enumeration, mapping directly over operating system functionality.
 	*/
 	enum class file_access : unsigned long /*DWORD*/ {
@@ -94,7 +89,8 @@ namespace fcrisan::native {
 	/**
 		Opens a file using native operating system functionality.
 	*/
-	std::shared_ptr<file> open_file(const nzstring *fileName, file_access, share_mode, create_mode);
+	std::shared_ptr<file> open_file(const char *fileName, file_access, share_mode, create_mode);
+	std::shared_ptr<file> open_file(const wchar_t *fileName, file_access, share_mode, create_mode);
 
 	/**
 		Holds the two ends of a pipe.
