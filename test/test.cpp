@@ -1,14 +1,9 @@
 ﻿#include <iostream>
-#include <algorithm>
-#include <functional>
 #include <vector>
-#include <array>
-#include <memory>
-#include <thread>
-#include <future>
 #include <regex>
+#include <future>
 #include <fcrisan/native/error.hpp>
-#include <FCrisan/native/filebuf.hpp>
+#include <fcrisan/native/filebuf.hpp>
 #include <fcrisan/native/file.hpp>
 #include <fcrisan/native/text_writer.hpp>
 
@@ -16,15 +11,12 @@
 #undef min
 #undef max
 
-#include <safeint.h>
-
-template <typename T> using safe_int = msl::utilities::SafeInt<T>;
-
-
-typedef char Byte;
+#include <SafeInt.hpp>
 
 using namespace fcrisan::native;
+template <typename T> using safe_int = SafeInt<T>;
 
+namespace  {
 
 union ZString {
 	const char *outputa;
@@ -529,7 +521,6 @@ void ClearScreen() {
 		throw_error("Cannot reposition cursor");
 }
 
-
 std::wstring GetConsoleText() {
 	auto hStdOut = GetStdOut();
 
@@ -564,8 +555,8 @@ std::wstring GetConsoleText() {
 	return buffer;
 }
 
-std::vector<Byte> read_to_end(file &f) {
-	std::vector<Byte> bytes;
+std::vector<std::byte> read_to_end(file &f) {
+    std::vector<std::byte> bytes;
 	bytes.resize(4096); // Should be enough for our tests.
 	auto bytesRead = f.read(&(bytes[0]), bytes.size());
 	bytes.resize(bytesRead);
@@ -574,16 +565,16 @@ std::vector<Byte> read_to_end(file &f) {
 
 template <typename Ch, typename It>
 int CompareResults(const TestCase<Ch> &tc, const It &begin, const It &end) {
-	const Byte *pStart;
-	const Byte *pEnd;
+    const std::byte *pStart;
+    const std::byte *pEnd;
 
 	if (tc.codePage == code_pages::utf16) {
-		pStart = reinterpret_cast<const Byte *>(tc.zstring.outputw);
-		pEnd = reinterpret_cast<const Byte *>(tc.zstring.outputw + wcslen(tc.zstring.outputw));
+        pStart = reinterpret_cast<const std::byte *>(tc.zstring.outputw);
+        pEnd = reinterpret_cast<const std::byte *>(tc.zstring.outputw + wcslen(tc.zstring.outputw));
 	}
 	else {
-		pStart = tc.zstring.outputa;
-		pEnd = tc.zstring.outputa + strlen(tc.zstring.outputa);
+        pStart = reinterpret_cast<const std::byte *>(tc.zstring.outputa);
+        pEnd = reinterpret_cast<const std::byte *>(tc.zstring.outputa + strlen(tc.zstring.outputa));
 	}
 
 	auto expectedSize = safe_int<std::size_t>(pEnd - pStart);
@@ -599,7 +590,7 @@ int CompareResults(const TestCase<Ch> &tc, const It &begin, const It &end) {
 }
 
 template <typename Ch>
-int CompareResults(const TestCase<Ch> &tc, const std::vector<Byte> &fileContents) {
+int CompareResults(const TestCase<Ch> &tc, const std::vector<std::byte> &fileContents) {
 	return CompareResults(tc, fileContents.begin(), fileContents.end());
 }
 
@@ -623,7 +614,7 @@ int RunPipeTest(const TestCase<Ch> &tc) {
 	auto buf = new fcrisan::native::filebuf<Ch>{ w };
 	auto out = std::basic_ostream<Ch>{buf};
 
-	std::vector<Byte> fileContents;
+    std::vector<std::byte> fileContents;
 
 	auto readTask = std::async(std::launch::async, [&]() {
 		fileContents = read_to_end(*pipe.read);
@@ -652,7 +643,7 @@ int RunFileTest(const TestCase<Ch> &tc) {
 	auto f = file{ h, true };
 	auto w = text_writer{ f, tc.codePage };
 	auto buf = new fcrisan::native::filebuf<Ch>{ w };
-	auto out = std::basic_ostream<Ch>{buf};
+    auto out = std::basic_ostream<Ch, std::char_traits<Ch>>{buf};
 
 	out << tc.input;
 	out.flush();
@@ -671,7 +662,7 @@ int RunNullTest(const TestCase<Ch> &tc) {
 	auto f = file{ nullptr, false }; // Empty writer.
 	auto w = text_writer{ f, tc.codePage };
 	auto buf = new fcrisan::native::filebuf<Ch>{ w };
-	auto out = std::basic_ostream<Ch>{ buf };
+    auto out = std::basic_ostream<Ch, std::char_traits<Ch>>{ buf };
 
 	out << tc.input;
 	out.flush();
@@ -689,7 +680,7 @@ int RunConsoleTest(const TestCase<Ch> &tc) {
 	auto f = file{ GetStdOut(), false };
 	auto w = text_writer{ f, tc.codePage };
 	auto buf = new fcrisan::native::filebuf<Ch>{ w };
-	auto out = std::basic_ostream<Ch>{ buf };
+    auto out = std::basic_ostream<Ch, std::char_traits<Ch>>{ buf };
 
 	ClearScreen();
 	out << tc.input;
@@ -698,7 +689,6 @@ int RunConsoleTest(const TestCase<Ch> &tc) {
 	auto consoleText = GetConsoleText();
 	return CompareResults<Ch>(tc, consoleText);
 }
-
 
 template <typename Ch>
 int RunTests(const std::vector<TestCase<Ch>> &testCases, std::function<int (const TestCase<Ch> &)> fn, const char *destination) {
@@ -712,6 +702,8 @@ int RunTests(const std::vector<TestCase<Ch>> &testCases, std::function<int (cons
 	}
 	return failed;
 }
+
+} // anonymous namespace
 
 int main() {
 	using namespace std;

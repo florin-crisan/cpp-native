@@ -1,9 +1,11 @@
 #include <fcrisan/native/file.hpp>
 #include <fcrisan/native/error.hpp>
+#include <SafeInt.hpp>
 #include <Windows.h>
-#include <safeint.h>
+#undef min
+#undef max
 
-template <typename T> using safe_int = msl::utilities::SafeInt<T>;
+template <typename T> using safe_int = SafeInt<T>;
 
 namespace fcrisan::native {
 
@@ -45,7 +47,7 @@ namespace fcrisan::native {
 	}
 
 	void file::rewind()  {
-		LARGE_INTEGER zeroPos = { 0 };
+        LARGE_INTEGER zeroPos = { };
 		clear_error();
 		if (!::SetFilePointerEx(pimpl->h, zeroPos, nullptr, FILE_BEGIN))
 			throw_error("cannot rewind file");
@@ -53,7 +55,7 @@ namespace fcrisan::native {
 
 	std::streamsize file::position() const {
 		static_assert(sizeof(std::streamsize) == sizeof(LARGE_INTEGER));
-		LARGE_INTEGER zeroPos = { 0 };
+        LARGE_INTEGER zeroPos = { };
 		LARGE_INTEGER pos;
 		clear_error();
 		if (!::SetFilePointerEx(pimpl->h, zeroPos, &pos, FILE_CURRENT))

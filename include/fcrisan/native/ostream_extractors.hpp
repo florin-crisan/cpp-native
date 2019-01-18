@@ -6,7 +6,6 @@
 #include <iosfwd>
 
 namespace std {
-
 	std::ostream & operator<<(std::ostream &, const wchar_t *);
 }
 

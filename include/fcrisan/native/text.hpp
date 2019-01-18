@@ -3,7 +3,7 @@
 
 #pragma once
 
-#include <string_view>
+#include <string>
 #include <fcrisan/native/code_page.hpp>
 
 namespace fcrisan::native {

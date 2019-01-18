@@ -1,11 +1,11 @@
 #include <fcrisan/native/text.hpp>
 #include <fcrisan/native/error.hpp>
-#include <array>
-#include <algorithm>
+#include <SafeInt.hpp>
 #include <Windows.h>
-#include <safeint.h>
+#undef min
+#undef max
 
-template <typename T> using safe_int = msl::utilities::SafeInt<T>;
+template <typename T> using safe_int = SafeInt<T>;
 
 namespace fcrisan::native {
 
@@ -29,13 +29,13 @@ namespace fcrisan::native {
 	std::string to_narrow_string(const wchar_t *wideString, std::size_t count, code_page_id codePage) {
 		safe_int<int> wideCount{ count };
 		clear_error();
-		safe_int<int> narrowCount = ::WideCharToMultiByte(codePage, 0, wideString, wideCount, nullptr, 0, nullptr, 0);
+        safe_int<int> narrowCount = ::WideCharToMultiByte(codePage, 0, wideString, wideCount, nullptr, 0, nullptr, nullptr);
 		if (!narrowCount)
 			throw_error("Cannot get narrow string length");
 		std::string narrowString;
 		narrowString.resize(narrowCount);
 		clear_error();
-		safe_int<int> resultingChars = ::WideCharToMultiByte(codePage, 0, wideString, wideCount, &narrowString[0], narrowCount, nullptr, 0);
+        safe_int<int> resultingChars = ::WideCharToMultiByte(codePage, 0, wideString, wideCount, &narrowString[0], narrowCount, nullptr, nullptr);
 		if (!resultingChars || resultingChars != narrowCount)
 			throw_error("Cannot convert to narrow string");
 		return narrowString;
@@ -60,9 +60,9 @@ namespace fcrisan::native {
 		wchar_t *end = what + count;
 		for (wchar_t *ch = what; ch != end; ++ch) {
 			if (*ch == L'\u0218') *ch = L'\u015E'; // S-comma -> S-cedilla
-			if (*ch == L'\u0219') *ch = L'\u015F'; // s-comma -> s-cedilla
-			if (*ch == L'\u021A') *ch = L'\u0162'; // T-comma -> T-cedilla
-			if (*ch == L'\u021B') *ch = L'\u0163'; // t-comma -> t-cedilla
+            else if (*ch == L'\u0219') *ch = L'\u015F'; // s-comma -> s-cedilla
+            else if (*ch == L'\u021A') *ch = L'\u0162'; // T-comma -> T-cedilla
+            else if (*ch == L'\u021B') *ch = L'\u0163'; // t-comma -> t-cedilla
 		}
 	}
 

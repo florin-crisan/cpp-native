@@ -3,11 +3,12 @@
 #include <fcrisan/native/text.hpp>
 #include <fcrisan/native/error.hpp>
 #include <stdexcept>
-#include <safeint.h>
+#include <SafeInt.hpp>
 #include <Windows.h>
+#undef min
+#undef max
 
-template <typename T>
-using safe_int = msl::utilities::SafeInt<T>;
+template <typename T> using safe_int = SafeInt<T>;
 
 namespace fcrisan::native {
 

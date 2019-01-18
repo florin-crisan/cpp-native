@@ -5,7 +5,6 @@
 
 #include <streambuf>
 #include <memory>
-#include <fcrisan/native/code_page.hpp>
 
 namespace fcrisan::native {
 
@@ -29,18 +28,17 @@ namespace fcrisan::native {
 		- Always outputs Unicode to Windows console.
 		- Precompose characters (where possible) so they look right on Windows console (which doesn't support precomposed characters).
 		- Encoding for file or pipe output defaults to console code page.
-
-		Usage example:
-
-		@code
-		cout.set_rdbuf(new fcrisan::native_streambuf<char>);
-		// Use cout normally:
-		cout << u8"Știință și tehnică\n";
-		@endcode
 	*/
 	template <typename Ch, typename Tr = std::char_traits<Ch>>
 	class filebuf : public std::basic_streambuf<Ch, Tr> {
+        typedef std::basic_streambuf<Ch, Tr> base_type;
 	public:
+        using typename base_type::char_type;
+        using typename base_type::traits_type;
+        using typename base_type::int_type;
+        using typename base_type::pos_type;
+        using typename base_type::off_type;
+
 		filebuf(text_writer &out);
 		filebuf(const filebuf &) = delete;
 		filebuf(filebuf &&) = delete;

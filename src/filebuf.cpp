@@ -1,14 +1,8 @@
 #include <fcrisan/native/filebuf.hpp>
 #include <fcrisan/native/text_writer.hpp>
+#include <SafeInt.hpp>
 
-#include <string_view>
-#include <stdexcept>
-
-#include <safeint.h>
-#include <Windows.h>
-
-template <typename T>
-using safe_int = msl::utilities::SafeInt<T>;
+template <typename T> using safe_int = SafeInt<T>;
 
 namespace fcrisan::native {
 

@@ -33,11 +33,11 @@ namespace fcrisan::native {
 	/**
 		Throws a std::system_error for the given native error code.
 	*/
-	void throw_error(const char *message, err_code = last_error());
+    [[noreturn]] void throw_error(const char *message, err_code = last_error());
 	/**
 		Throws a std::system_error for the given std::error_code.
 	*/
-	void throw_error(const char *message, std::error_code);
+    [[noreturn]] void throw_error(const char *message, std::error_code);
 
 } // namespace fcrisan::native
 

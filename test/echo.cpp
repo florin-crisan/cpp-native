@@ -5,10 +5,11 @@
 #include <fcrisan/native/ostream_extractors.hpp>
 #include <fcrisan/native/text.hpp>
 #include <iostream>
-#include <sstream>
 #include <memory>
 #include <vector>
 #include <Windows.h>
+#undef min
+#undef max
 
 int normal_main(int argc, const char **argv) {
 	using namespace std;
