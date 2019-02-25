@@ -7,13 +7,15 @@
 
 namespace fcrisan::native {
 
+    /**
+        Native operating system error code type.
+
+        Set by operating system native API functions.
+    */
 #ifdef _WIN32
-	/**
-		Native operating system error code type.
-		
-		Set by operating system native API functions.
-	*/
 	typedef /*DWORD*/ unsigned long err_code;
+#elif defined(__linux__)
+    typedef int err_code;
 #else
 #   error Not implemented for this platform.
 #endif

@@ -8,11 +8,13 @@
 
 namespace fcrisan::native {
 
-#ifdef _WIN32
-	/**
-		Native operating system file handle type.
-	*/
-	typedef /*HANDLE*/ void* file_handle;
+    /**
+        Native operating system file handle type.
+    */
+#if defined(_WIN32)
+    typedef /*HANDLE*/ void* file_handle;
+#elif defined(__linux__)
+    typedef int file_handle;
 #else
 #   error Not implemented for this platform.
 #endif
@@ -56,24 +58,46 @@ namespace fcrisan::native {
 	};
 
 
-#ifdef _WIN32
-
-	/**
-		File access enumeration, mapping directly over operating system functionality.
-	*/
-	enum class file_access : unsigned long /*DWORD*/ {
+    /**
+        File access enumeration, mapping directly over operating system functionality.
+    */
+#if defined(_WIN32)
+    enum class file_access : unsigned long /*DWORD*/ {
 		read = 0x80000000 /*GENERIC_READ*/,
 		write = 0x40000000 /*GENERIC_WRITE*/,
 		rw = read | write
-	};
+    };
+#elif defined(__linux__)
+//#include <fcntl.h>
+    enum class file_access : int {
+        read = 0 /*O_RDONLY*/,
+        write = 1 /*O_WRONLY*/,
+        rw = 2 /*O_RDWR*/,
+    };
+#else
+#   error Not implemented for this plaform.
+#endif
 
-	enum class share_mode : unsigned long /*DWORD*/ {
+#if defined(_WIN32)
+    enum class share_mode : unsigned long /*DWORD*/ {
 		none = 0,
 		read = 1 /*FILE_SHARE_READ*/,
 		write = 2 /*FILE_SHARE_WRITE*/,
 		del = 4 /*FILE_SHARE_DELETE*/,
 	};
+#elif defined(__linux__)
+    enum class share_mode : int {
+        // TODO
+        none = 0,
+        read = 0,
+        write = 0,
+        del = 0,
+    };
+#else
+#   error Not implemented for this platform.
+#endif
 
+#if defined(_WIN32)
 	enum class create_mode : unsigned long /*DWORD*/ {
 		create_always = 2 /*CREATE_ALWAYS*/,
 		create_new = 1 /*CREATE_NEW*/,
@@ -81,7 +105,17 @@ namespace fcrisan::native {
 		open_existing = 3 /*OPEN_EXISTING*/,
 		truncate_existing = 5 /*TRUNCATE_EXISTING*/,
 	};
-
+#elif defined(__linux__)
+    enum class create_mode : int {
+        /// If exists, overwrite.
+        create_always = 01000 /*O_TRUNC*/,
+        /// Fail if it exist.
+        create_new = 0100 | 0200 /*O_CREAT|O_EXCL*/,
+        open_always = 0100 /*O_CREAT*/,
+        open_existing = 0 /*OPEN_EXISTING*/,
+        // TODO
+        //truncate_existing = 5 /*TRUNCATE_EXISTING*/,
+    };
 #else
 #   error Not implemented for this platform.
 #endif
